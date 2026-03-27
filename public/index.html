@@ -46,7 +46,7 @@
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = `results-${query}.json`;
+            a.download = "results.json";
             a.click();
 
             URL.revokeObjectURL(url);
