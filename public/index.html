@@ -12,7 +12,11 @@
 
     <pre id="output"></pre>
 
+     <button id="downloadBtn" style="display:none;">Stáhnout JSON</button>
+
     <script>
+        let lastResults = [];
+
         async function search() {
             const query = document.getElementById("query").value;
             const res = await fetch(`/api/search?q=${query}`);
@@ -21,13 +25,31 @@
             document.getElementById("output").textContent =
                 JSON.stringify(data, null, 2);
 
-            const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+            lastResults = data;
+
+            const downloadBtn = document.getElementById("downloadBtn");
+            if (Array.isArray(data) && data.length > 0) {
+                downloadBtn.style.display = "block";
+            } else {
+                downloadBtn.style.display = "none";
+            }
+        }
+
+        function downloadJSON() {
+            if (!lastResults.length) return;
+
+            const blob = new Blob([JSON.stringify(lastResults, null, 2)], {
+            type: "application/json"
+            });
+
             const url = URL.createObjectURL(blob);
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = "results.json";
+            a.download = `results-${query}.json`;
             a.click();
+
+            URL.revokeObjectURL(url);
         }
     </script>
 </body>
